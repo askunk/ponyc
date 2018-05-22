@@ -315,10 +315,10 @@ class File
       if r < len.isize() then
         _errno =
           if r == 0 then
-             FileEOF
-           else
-             _get_error() // error
-           end
+            FileEOF
+          else
+            _get_error() // error
+          end
       end
 
       result.truncate(r.usize())

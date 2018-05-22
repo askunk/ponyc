@@ -377,11 +377,11 @@ class _HTTPConnTestHandler is HTTPHandler
     h = h'
     h.complete_action("client handler create called")
 
-  fun ref apply(payload: Payload val): Any => 
+  fun ref apply(payload: Payload val): Any =>
     n_received = n_received + 1
     h.complete_action("client handler apply called " + n_received.string())
 
-  fun ref chunk(data: ByteSeq val) => 
+  fun ref chunk(data: ByteSeq val) =>
     h.log("_HTTPConnTestHandler.chunk called")
 
 class val _HTTPConnTestHandlerFactory is HandlerFactory
@@ -428,14 +428,14 @@ class iso _HTTPConnTest is UnitTest
           let hf = _HTTPConnTestHandlerFactory(h)
           client = recover iso HTTPClient(h.env.root as TCPConnectionAuth) end
 
-          for _ in Range(0, loops) do 
+          for _ in Range(0, loops) do
             let payload: Payload iso = Payload.request("GET", url)
             payload.set_length(0)
             try
               (client as HTTPClient iso)(consume payload, hf)?
             end
           end
-        else 
+        else
           h.log("Error in worker.listening")
           h.complete(false)
         end // try
@@ -446,13 +446,13 @@ class iso _HTTPConnTest is UnitTest
       TCPListener.ip4(
         h.env.root as AmbientAuth,
         _FixedResponseHTTPServerNotify(
-          h, 
+          h,
           {(p: String val) =>
             worker.listening(p)
             None
           },
-          recover 
-            [ as String val: 
+          recover
+            [ as String val:
               "HTTP/1.1 200 OK"
               "Server: pony_fake_server"
               "Content-Length: 0"
@@ -476,8 +476,8 @@ primitive _FixedResponseHTTPServerNotify
   """
 
   fun apply(
-    h': TestHelper, 
-    f: {(String val)} iso, 
+    h': TestHelper,
+    f: {(String val)} iso,
     r: Array[String val] val)
     : TCPListenNotify iso^
   =>
@@ -506,7 +506,7 @@ primitive _FixedResponseHTTPServerNotify
 
         fun ref connected(listen: TCPListener ref): TCPConnectionNotify iso^ =>
           h.complete_action("server listen connected")
-          recover 
+          recover
             object is TCPConnectionNotify iso^
             // let response': Array[String val] val = response
             let reader: Reader iso = Reader
@@ -553,11 +553,11 @@ primitive _FixedResponseHTTPServerNotify
             fun ref connecting(conn: TCPConnection ref, count: U32) =>
               h.log("connecting")
               None
-            
+
             fun ref connect_failed(conn: TCPConnection ref) =>
               h.log("connect_failed")
               None
-            
+
             fun ref throttled(conn: TCPConnection ref) =>
               h.log("throttled")
 
@@ -566,5 +566,5 @@ primitive _FixedResponseHTTPServerNotify
           end // object
         end // recover
 
-      end // object  
+      end // object
     end // recover
